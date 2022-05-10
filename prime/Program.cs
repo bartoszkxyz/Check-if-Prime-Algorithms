@@ -130,13 +130,11 @@ namespace prime
             Console.WriteLine("-- Primality2 --");
             foreach (BigInteger number in PrimeNumbs)
             {
-                Console.Write(number);
-                DivsNum = 0;
+                var Primes = Generate(Convert.ToInt32(Math.Sqrt((ulong)(PrimeNumbs[PrimeNumbs.Count-1]))));
                 if (AlgorytmJeszczeLepszy(number, Primes))
                     Console.Write("= yep " + DivsNum);
                 else
                     Console.Write("= nay " + DivsNum);
-                Console.Write("\n");
             }
         }
     }

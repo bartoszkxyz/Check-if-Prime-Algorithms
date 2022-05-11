@@ -7,7 +7,7 @@ namespace prime
     internal class Program
     {
         //Deklaracja zmiennej instrumentacji i listy do sprawdzania
-        static List<BigInteger> PrimeNumbs = new List<BigInteger>() { 101, 1009, 10091, 100913, 1009139, 10091401, 100914061, 1009140611, 10091406133, 100914061337, 100914061333 };
+        static List<BigInteger> PrimeNumbs = new List<BigInteger>() { 101, 1009, 10091, 100913, 1009139, 10091401, 100914061, 1009140611, 10091406133, 100914061337, 1009140613399 };
         static ulong Instr;
         static double ElapsedSeconds;
         static List<bool> isPrime = new List<bool>();

@@ -1,13 +1,72 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Diagnostics;
 namespace prime
 {
     internal class Program
     {
-        static ulong DivsNum;
+        //Deklaracja zmiennej instrumentacji i listy do sprawdzania
+        static List<BigInteger> PrimeNumbs = new List<BigInteger>() { 101, 1009, 10091, 100913, 1009139, 10091401, 100914061, 1009140611, 10091406133, 100914061337, 100914061333 };
+        static ulong Instr;
+        static double ElapsedSeconds;
         static List<bool> isPrime = new List<bool>();
-        static List<BigInteger> Generate(int Num) 
+
+        static void StoperPrzykladowy()
+        {
+            ElapsedSeconds = 0;
+            long ElapsedTime=0,StartingTime,EndingTime;
+                foreach (BigInteger number in PrimeNumbs)
+                {
+                        StartingTime = Stopwatch.GetTimestamp();
+                        if (AlgorytmPrzykladowy(number))
+                            Console.Write($"{number} \t Tak \t {Instr} \t ");
+                        else
+                            Console.Write($"{number} \t Nie \t {Instr} \t ");
+                        EndingTime = Stopwatch.GetTimestamp();
+                        ElapsedTime = EndingTime - StartingTime;
+                        ElapsedSeconds = ElapsedTime * (1.0 / (12 * Stopwatch.Frequency));
+                        Console.Write(ElapsedSeconds.ToString("F6")+"s \n");
+                }
+        }
+
+        static void StoperPrzyzwoity()
+        {
+            ElapsedSeconds = 0;
+            long ElapsedTime = 0, StartingTime, EndingTime;
+            foreach (BigInteger number in PrimeNumbs)
+            {
+                StartingTime = Stopwatch.GetTimestamp();
+                if (AlgorytmPrzyzwoity(number))
+                    Console.Write($"{number} \t Tak \t {Instr} \t ");
+                else
+                    Console.Write($"{number} \t Nie \t {Instr} \t ");
+                EndingTime = Stopwatch.GetTimestamp();
+                ElapsedTime = EndingTime - StartingTime;
+                ElapsedSeconds = ElapsedTime * (1.0 / (12 * Stopwatch.Frequency));
+                Console.Write(ElapsedSeconds.ToString("F6") + "s \n");
+            }
+        }
+
+        static void StoperOptymalny(List<BigInteger> Primes)
+        {
+            ElapsedSeconds = 0;
+            long ElapsedTime = 0, StartingTime, EndingTime;
+            foreach (BigInteger number in PrimeNumbs)
+            {
+                StartingTime = Stopwatch.GetTimestamp();
+                if (AlgorytmOptymalny(number, Primes))
+                    Console.Write($"{number} \t Tak \t {Instr} \t ");
+                else
+                    Console.Write($"{number} \t Nie \t {Instr} \t ");
+                EndingTime = Stopwatch.GetTimestamp();
+                ElapsedTime = EndingTime - StartingTime;
+                ElapsedSeconds = ElapsedTime * (1.0 / (12 * Stopwatch.Frequency));
+                Console.Write(ElapsedSeconds.ToString("F6") + "s \n");
+            }
+        }
+        //funkcja generująca tablicę z liczbami pierwszymi od 0 do sqrt(ostatniej liczby testowej)
+        static List<BigInteger> Generate(BigInteger Num) 
         {
             for (int i = 0; i <= Num + 1; i++) isPrime.Add(true);
             isPrime[0] = false;
@@ -16,7 +75,7 @@ namespace prime
             {
                 if (isPrime[i] == true)
                 {
-                    for(int j = i + i;j <= Num; j += i)
+                    for(int j = i + i;j <= Num-1; j += i)
                     {
                         isPrime[j] = false;
                     }
@@ -35,6 +94,7 @@ namespace prime
             return list;
         }
 
+        //Algorytm Przykładowy + instrumentacja
         static bool AlgorytmPrzykladowy(BigInteger Num)
         {
             if (Num < 2) return false;
@@ -42,100 +102,70 @@ namespace prime
             else if (Num % 2 == 0) return false;
             else
             {
-                DivsNum = 1;
+                Instr = 1;
                 for (BigInteger u = 3; u < Num / 2; u += 2)
                 {
-                    DivsNum++;
+                    Instr++;
                     if (Num % u == 0) return false;
                 }
             }
             return true;
         }
-
-        /*static bool AlgorytmPrzykładowyInstrumentacja(BigInteger Num)
+        //Algorytm "przyzwoity" + instrumentacja
+        static bool AlgorytmPrzyzwoity(BigInteger Num)
         {
-}*/
-        static bool AlgorytmLepszy(BigInteger Num)
-        {
-            DivsNum=4;
             if (Num < 2) return false;
             else if (Num < 4) return true;
             else if (Num % 2 == 0) return false;
-            else if (Num % 3 == 0) return false;
+            //else if (Num % 3 == 0) return false;
             else
             {
-                DivsNum = 1;
-                for (BigInteger u = 5; u * u <= Num; u += 6)
+                Instr = 1;
+                for (BigInteger u = 3; u * u <= Num; u += 2)
                 {
-                    DivsNum++;
+                    Instr++;
                     if (Num % u == 0 || Num % (u + 2) == 0) return false;
                 }
                 return true;
             }
         }
-        /*static bool AlgorytmLepszyInstrumentacja(BigInteger Num)
-        {
-}*/
-        static bool AlgorytmJeszczeLepszy(BigInteger Num, List<BigInteger> list)
+
+        //Algorytm optymalny + instrumentacja
+        static bool AlgorytmOptymalny(BigInteger Num, List<BigInteger> list)
         {
             if (Num < 2) return false;
             else if (Num < 4) return true;
             else if (Num % 2 == 0) return false;
             else
-                DivsNum = 1;
+                Instr = 1;
                 for (int u = 0; list[u] * list[u] <= Num; u++)
                 {
-                    DivsNum++;
+                    Instr++;
                     if (Num % list[u] == 0) return false;
                 }
             return true;
         }
-        /*        static bool AlgorytmJeszczeLepszyInstrumentacja(BigInteger Num)
+        /*        static bool AlgorytmOptymalnyInstrumentacja(BigInteger Num)
                 {
         }*/
         static void Main(string[] args)
         {
-            var PrimeNumbs = new List<BigInteger>() { 101, 1009, 10091, 100913, 1009139, 10091401, 100914061 };//, 1009140611, 10091406133, 100914061337, 100914061339 };
             //PrimeNumbs.Add(BigInteger.Parse("18870929470561300001893"));
-            var Primes = Generate(200);
+            int x = Convert.ToInt32(Math.Sqrt((long)PrimeNumbs[PrimeNumbs.Count - 1]));
+            var Primes = Generate(x);
 
 
             // tests
-
+            Console.WriteLine("Liczba \t CzyPierwsza \t Instrumentacja \t Czas ");
             //Example test
-            Console.WriteLine("-- Example --");
-            foreach (BigInteger number in PrimeNumbs)
-            {
-                DivsNum = 0;
-                if (AlgorytmPrzykladowy(number))
-                    Console.WriteLine("yep " + DivsNum);
-                else
-                    Console.WriteLine("nay " + DivsNum);
-            }
-
-            //Primality test 
-            Console.WriteLine("-- Primality --");
-            foreach (BigInteger number in PrimeNumbs)
-            {
-                Console.Write(number);
-                DivsNum = 0;
-                if (AlgorytmLepszy(number))
-                    Console.Write("= yep "+DivsNum);
-                else
-                    Console.Write("= nay "+DivsNum);
-                Console.Write("\n");
-            }
-            
-            //Primality test 2
-            Console.WriteLine("-- Primality2 --");
-            foreach (BigInteger number in PrimeNumbs)
-            {
-                var Primes = Generate(Convert.ToInt32(Math.Sqrt((ulong)(PrimeNumbs[PrimeNumbs.Count-1]))));
-                if (AlgorytmJeszczeLepszy(number, Primes))
-                    Console.Write("= yep " + DivsNum);
-                else
-                    Console.Write("= nay " + DivsNum);
-            }
+            Console.WriteLine("-- Example Test--");
+            StoperPrzykladowy();
+            //Wywołanie A Przyzwoitego
+            Console.WriteLine("-- Acceptable Test --");
+            StoperPrzyzwoity();
+            //Wywołanie A Optymalnego
+            Console.WriteLine("-- Optimal Test --");
+            StoperOptymalny(Primes);
         }
     }
 }
